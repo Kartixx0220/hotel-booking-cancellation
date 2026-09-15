@@ -1,0 +1,12 @@
+# Large model - stored separately
+models/random_forest_final.pkl
+
+# Temporary files
+try.py
+
+# Python
+__pycache__/
+*.pyc
+
+# Jupyter
+.ipynb_checkpoints/
