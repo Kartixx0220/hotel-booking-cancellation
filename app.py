@@ -1,13 +1,36 @@
 import streamlit as st
 import pandas as pd
 import joblib
+from pathlib import Path
+from urllib.request import urlretrieve
 
-
+st.set_page_config(
+    page_title="Hotel Booking Cancellation Predictor",
+    page_icon="🏨",
+    layout="wide"
+)
 # =========================
 # Load saved artifacts
 # =========================
+MODEL_PATH = Path("models/random_forest_final.pkl")
 
-rf_model = joblib.load("models/random_forest_final.pkl")
+MODEL_URL = "https://github.com/Kartixx0220/hotel-booking-cancellation/releases/download/v1.0.0/random_forest_final.pkl"
+
+
+@st.cache_resource
+def load_model():
+    if not MODEL_PATH.exists():
+        MODEL_PATH.parent.mkdir(parents=True, exist_ok=True)
+
+        with st.spinner("Downloading model... This may take a moment."):
+            urlretrieve(MODEL_URL, MODEL_PATH)
+
+    return joblib.load(MODEL_PATH)
+
+
+rf_model = load_model()
+
+
 threshold = joblib.load("models/random_forest_threshold.pkl")
 onehot_encoder = joblib.load("models/onehot_encoder.pkl")
 
@@ -103,12 +126,6 @@ def predict_cancellation(booking):
 # =========================
 # Streamlit UI
 # =========================
-
-st.set_page_config(
-    page_title="Hotel Booking Cancellation Predictor",
-    page_icon="🏨",
-    layout="wide"
-)
 
 st.title("🏨 Hotel Booking Cancellation Predictor")
 st.write(
